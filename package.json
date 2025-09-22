@@ -7,7 +7,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "deploy": "ng build --configuration production --base-href=/bubble-wrap/ && npx angular-cli-ghpages --dir=dist/bubble-wrap/browser --branch=gh-pages --repo=https://github.com/sashaumnykh/bubble-wrap.git --name=\"sashaumnykh\" --email=\"you@example.com\""  
+    "build:web": "ng build --configuration production --output-path=dist/web --base-href=/bubble-wrap/",
+    "build:bot": "ng build --configuration bot --output-path=dist/bot --base-href=/bubble-wrap/bot/",
+    "deploy": "npm run build:web && npm run build:bot && rm -rf dist/deploy && mkdir -p dist/deploy/bot && cp -r dist/web/* dist/deploy/ && cp -r dist/bot/* dist/deploy/bot/ && npx angular-cli-ghpages --dir=dist/deploy --branch=gh-pages --repo=https://github.com/sashaumnykh/bubble-wrap.git"
   },
   "private": true,
   "dependencies": {
@@ -24,6 +26,7 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
+    "@angular-devkit/build-angular": "^20.1.4",
     "@angular/build": "^20.0.1",
     "@angular/cli": "^20.0.1",
     "@angular/compiler-cli": "^20.0.0",
