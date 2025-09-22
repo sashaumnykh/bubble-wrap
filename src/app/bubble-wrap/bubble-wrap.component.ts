@@ -31,7 +31,6 @@ export class BubbleWrapComponent {
   }
 
   ngAfterViewInit() {
-    alert(environment.mode)
     if (environment.mode === 'bot') {
       this.rows = environment.rows;
       this.columns = environment.cols;
