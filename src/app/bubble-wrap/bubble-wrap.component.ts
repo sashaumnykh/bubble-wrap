@@ -1,5 +1,6 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { BubbleObj } from '../models/bubbleObj copy';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-bubble-wrap',
@@ -18,7 +19,9 @@ export class BubbleWrapComponent {
 
   bubbleSize: number = 60;
 
-  columns: number = 0;
+  gap: number = 4;
+  rows: number | undefined = 0;
+  columns: number | undefined = 0;
 
   @ViewChild('container') containerRef!: ElementRef<HTMLDivElement>;
 
@@ -28,8 +31,23 @@ export class BubbleWrapComponent {
   }
 
   ngAfterViewInit() {
-    const gap = 4;
-    const totalBubbleSize = this.bubbleSize + gap;
+    alert(environment.mode)
+    if (environment.mode === 'bot') {
+      this.rows = environment.rows;
+      this.columns = environment.cols;
+
+      this.fillBubbles();
+    } else {
+      this.calcRowsAndCols();
+
+      window.addEventListener('resize', () => {
+        this.calcRowsAndCols();
+      });
+    }
+  }
+
+  calcRowsAndCols() {
+    const totalBubbleSize = this.bubbleSize + this.gap;
 
     const containerEl = this.containerRef.nativeElement;
     const { width, height } = containerEl.getBoundingClientRect();
@@ -37,11 +55,14 @@ export class BubbleWrapComponent {
     debugger;
     const safeOffset = 8;
     const availableHeight = height - safeOffset;
-    const cols = Math.floor(width / totalBubbleSize);
-    const rows = Math.floor(availableHeight / totalBubbleSize);
+    this.columns = Math.floor(width / totalBubbleSize);
+    this.rows = Math.floor(availableHeight / totalBubbleSize);
 
-    this.columns = cols;
-    this.numberOfBubbles = cols * rows;
+    this.fillBubbles();
+  }
+
+  fillBubbles() {
+    this.numberOfBubbles = (this.columns && this.rows) ? (this.columns * this.rows) : 0;
 
     this.listBubbles = new Array(this.numberOfBubbles).fill(null).map(() => new BubbleObj());
     let killerIndex = Math.floor(Math.random() * this.numberOfBubbles);
